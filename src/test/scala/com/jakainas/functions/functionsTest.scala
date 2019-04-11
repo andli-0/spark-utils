@@ -1,8 +1,10 @@
 package com.jakainas.functions
 
-import com.jakainas.functions.functionsTest.TestData
+import com.jakainas.table.{DailyPartitioning, Table, TableConfig}
+import com.jakainas.utils.SparkTest
 
 class functionsTest extends SparkTest {
+  import functionsTest._
   import org.apache.spark.sql.functions._
   import spark.implicits._
 
@@ -41,9 +43,27 @@ class functionsTest extends SparkTest {
     plusDays("2018-01-10", 0) shouldEqual "2018-01-10"
     an [NullPointerException] should be thrownBy plusDays(null, 5)
   }
-
 }
 
 object functionsTest {
   case class TestData(x: String, y: Int)
+  object TestData {
+    implicit val tableConf = new Table[TestData] with DailyPartitioning with LogTables
+  }
+
+  trait LogTables extends TableConfig {
+    override def basePath: String = "/tmp/footables"
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+

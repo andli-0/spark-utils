@@ -7,7 +7,7 @@ import org.apache.spark.sql.catalyst.ScalaReflection
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.{Column, Dataset, Encoder}
+import org.apache.spark.sql.{Column, Dataset, Encoder, SparkSession}
 
 import scala.reflect.runtime.universe._
 
@@ -40,7 +40,7 @@ package object functions {
     LocalDate.parse(date, DateTimeFormatter.ISO_DATE).minusDays(-numDays).toString
   }
 
-  implicit class DatasetFunctions[T](val ds: Dataset[T]) {
+  implicit class DatasetFunctions[T](val ds: Dataset[T]) extends AnyVal {
     /**
       * Remove duplicate rows using some column criteria for grouping and ordering
       * @param partCols - How to group rows.  Only 1 row from each group will be in the result
@@ -63,6 +63,13 @@ package object functions {
       if (conv == null)
         deduped.asInstanceOf[Dataset[T]]
       else deduped.as[T](conv)
+    }
+  }
+
+  implicit class SparkFunctions(val spark: SparkSession) extends AnyVal {
+    def load[T : Encoder]: Dataset[T] = {
+
+      null
     }
   }
 }
